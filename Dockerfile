@@ -10,6 +10,7 @@ RUN apt install -y build-essential python3 python3-pip sudo curl wget git vim ap
 RUN ln -sf /usr/bin/python3 /usr/bin/python && \
     ln -sf /usr/bin/pip3    /usr/bin/pip
 COPY rtl-sdr.rules /etc/udev/rules.d/rtl-sdr.rules
+COPY Miniforge3-Linux-aarch64.sh /root/Miniforge3-Linux-aarch64.sh
 #COPY 20.rtl-sdr.rules /etc/udev/rules.d/20.rtl-sdr.rules
-RUN echo "blacklist dvb_usb_rtl28xxu" >> /etc/modprobe.d/blacklist.conf
+RUN echo "blacklist dvb_usb_rtl28xxu" >> /etc/modprobe.d/rtl28xxu-blacklist.conf
 RUN mkdir ~/code

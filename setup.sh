@@ -4,6 +4,9 @@ set -x
 # Comment this back in for debugging
 set -e
 
+projdir=${HOME}/code
+mkdir -p $projdir
+
 ## Debian based
 #sudo apt update && sudo apt upgrade -y && sudo apt install -y build-essential aptitude htop curl git vim tmux zsh
 #sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -13,8 +16,8 @@ set -e
 ## set ZSH_THEME="jonathan" near the top of the .zshrc file
 #echo 'ZSH_THEME="jonathan"' >> ~/.zshrc
 #sudo apt install -y xterm rtl-sdr gnuradio gr-osmosdr gr-soapy gr-limesdr limesuite
-#mkdir -p ~/code
-#cd code
+#mkdir -p $projdir
+#cd $projdir
 #git clone https://github.com/konimaru/cariboulite.git cariboulite_konimaru
 #
 ### Alphafold docker container
@@ -23,7 +26,6 @@ set -e
 
 ### Just for setting up rpi for sdr
 if [ $1 = "initial" ]; then
-  mkdir -p ~/code
   for folder in "Pictures Videos Music Bookshelf"; do [ -d $folder ] && rm -rf $folder; done
   sudo apt update
   DEBIAN_FRONTEND=noninteractive apt install -y ca-certificates build-essential \
@@ -49,7 +51,7 @@ fi
 
 # Install cariboulite
 if [ $1 = "caribou" ]; then
-  cd ~/code
+  cd $projdir
   git clone https://github.com/konimaru/cariboulite.git cariboulite_konimaru
 fi
 
@@ -57,7 +59,7 @@ if [ $1 = "python" ]; then
   sudo apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev \
     libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev
 
-  cd ~/code
+  cd $projdir
   wget https://www.python.org/ftp/python/3.10.11/Python-3.10.11.tgz
   tar -xf Python-3.10.*.tgz
   cd Python-3.10.*/
@@ -82,7 +84,7 @@ if [ $1 = "gnuradio" ]; then
     libcodec2-dev libgsm1-dev libusb-1.0-0 libusb-1.0-0-dev libudev-dev \
     libiio-dev libad9361-dev libspdlog-dev python3-mako python3-packaging python3-jsonschema
 
-  cd ~/code
+  cd $projdir
   [ -d volk ] && rm -rf volk
   git clone --recursive https://github.com/gnuradio/volk.git
   cd volk
@@ -94,7 +96,7 @@ if [ $1 = "gnuradio" ]; then
   sudo make install
   sudo ldconfig
 
-  cd ~/code
+  cd $projdir
   [ -d gnuradio ] && rm -rf gnuradio
   git clone https://github.com/gnuradio/gnuradio.git
   cd gnuradio
@@ -119,16 +121,15 @@ fi
 if [ $1 = "kraken" ]; then
   sudo apt-get install -y gnuradio-dev cmake libspdlog-dev clang clang-format
 
-  cd ~/code
+  cd $projdir
   [ -d gr-krakensdr ] && rm -rf gr-krakensdr
-  git clone https://github.com/krakenrf/gr-krakensdr
+  git clone https://github.com/krakenrf/gr-krakensdr.git
   cd gr-krakensdr
   mkdir build
   cd build
   cmake ..
   make -j$(nproc)
   sudo make install
-  cd ../..
 
   # Heimdal
   # 1. dependencies
@@ -136,8 +137,9 @@ if [ $1 = "kraken" ]; then
   sudo apt install -y build-essential git cmake libusb-1.0-0-dev lsof libzmq3-dev
 
   # 2. custom kernel driver
+  cd $projdir
   [ -d librtlsdr ] && rm -rf librtlsdr
-  git clone https://github.com/krakenrf/librtlsdr
+  git clone https://github.com/krakenrf/librtlsdr.git
   cd librtlsdr
   sudo cp rtl-sdr.rules /etc/udev/rules.d/rtl-sdr.rules
   mkdir build
@@ -151,19 +153,20 @@ if [ $1 = "kraken" ]; then
   #sudo reboot
 
   # 3. Ne10
+  cd $projdir
   [ -d Ne10 ] && rm -rf Ne10
-  git clone https://github.com/krakenrf/Ne10
+  git clone https://github.com/krakenrf/Ne10.git
   cd Ne10
   mkdir build
   cd build
   cmake -DNE10_LINUX_TARGET_ARCH=aarch64 -DGNULINUX_PLATFORM=ON -DCMAKE_C_FLAGS="-mcpu=native -Ofast -funsafe-math-optimizations" ..
   make -j$(nproc)
-  cd ../..
 
   # 4. Miniforge (only works on 64 bit)
   cd
-  wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh
-  chmod ug+x Miniforge3-Linux-aarch64.sh
+  #wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh
+  #chmod ug+x Miniforge3-Linux-aarch64.sh
+  # Edit to remove all read commands
   SHELL=/bin/bash ./Miniforge3-Linux-aarch64.sh
   # Answer yes to all questions
   # sudo reboot
@@ -175,17 +178,17 @@ if [ $1 = "kraken" ]; then
   source ~/.bashrc
 
   # 5. Miniconda setup
-  conda create -n kraken python=3.9.7
+  conda create --yes -n kraken python=3.9.7
   conda activate kraken
 
-  conda install scipy==1.9.3
-  conda install numba
-  conda install configparser
-  conda install pyzmq
-  conda install scikit-rf
+  conda install --yes scipy==1.9.3
+  conda install --yes numba
+  conda install --yes configparser
+  conda install --yes pyzmq
+  conda install --yes scikit-rf
 
   # 6. Heimdall Firmware
-  cd ~/code
+  cd $projdir
   mkdir krakensdr
   cd krakensdr
 
@@ -193,14 +196,14 @@ if [ $1 = "kraken" ]; then
   git clone https://github.com/krakenrf/heimdall_daq_fw
   cd heimdall_daq_fw
 
-  cd ~/code/krakensdr/heimdall_daq_fw/Firmware/_daq_core/
-  cp ~/code/librtlsdr/build/src/librtlsdr.a .
-  cp ~/code/librtlsdr/include/rtl-sdr.h .
-  cp ~/code/librtlsdr/include/rtl-sdr_export.h .
-  cp ~/code/Ne10/build/modules/libNE10.a .
+  cd $projdir/krakensdr/heimdall_daq_fw/Firmware/_daq_core/
+  cp $projdir/librtlsdr/build/src/librtlsdr.a .
+  cp $projdir/librtlsdr/include/rtl-sdr.h .
+  cp $projdir/librtlsdr/include/rtl-sdr_export.h .
+  cp $projdir/Ne10/build/modules/libNE10.a .
 
   # 7. Kraken DoA DSP (direction of arrival) Some of the install instructions are duplicate of what I've done earlier.
-  #cd ~/code
+  #cd $projdir
   #git clone https://github.com/krakenrf/krakensdr_doa.git
 fi
 
