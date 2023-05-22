@@ -201,8 +201,8 @@ if [ $1 = "kraken" ]; then
   cp $projdir/librtlsdr/include/rtl-sdr.h .
   cp $projdir/librtlsdr/include/rtl-sdr_export.h .
   cp $projdir/Ne10/build/modules/libNE10.a .
-  cp $projdir/heimdall_daq_fw/heimdall_only_start.sh krakensdr/
-  cp $projdir/heimdall_daq_fw/heimdall_only_stop.sh krakensdr/
+  cp $projdir/krakensdr/heimdall_daq_fw/heimdall_only_start.sh krakensdr/
+  cp $projdir/krakensdr/heimdall_daq_fw/heimdall_only_stop.sh krakensdr/
 
   # 7. Kraken DoA DSP (direction of arrival) Some of the install instructions are duplicate of what I've done earlier.
   cd $projdir/krakensdr
