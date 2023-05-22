@@ -6,7 +6,8 @@ RUN echo "alias l='ls -lahAF'" > /root/.bashrc && \
     ln -sf /usr/share/zoneinfo/America/Denver /etc/localtime
 
 RUN apt update -qq && apt update -y
-RUN apt install -y build-essential python3 python3-pip sudo curl wget git vim aptitude xterm x11-apps gnuradio gir1.2-gtk-3.0 usbutils rtl-sdr gr-osmosdr #gqrx-sdr
+RUN apt install -y build-essential python3 python3-pip sudo curl wget git vim \
+    aptitude xterm x11-apps gnuradio gir1.2-gtk-3.0 usbutils rtl-sdr gr-osmosdr
 RUN ln -sf /usr/bin/python3 /usr/bin/python && \
     ln -sf /usr/bin/pip3    /usr/bin/pip
 COPY rtl-sdr.rules /etc/udev/rules.d/rtl-sdr.rules
