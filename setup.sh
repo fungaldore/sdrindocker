@@ -131,7 +131,7 @@ if [ $1 = "kraken" ]; then
   make -j$(nproc)
   sudo make install
 
-  # Heimdal
+  # Heimdall
   # 1. dependencies
   sudo apt update
   sudo apt install -y build-essential git cmake libusb-1.0-0-dev lsof libzmq3-dev
@@ -193,7 +193,7 @@ if [ $1 = "kraken" ]; then
   cd krakensdr
 
   [ -d heimdall_daq_fw] && rm -rf heimdall_daq_fw
-  git clone https://github.com/krakenrf/heimdall_daq_fw
+  git clone https://github.com/krakenrf/heimdall_daq_fw.git
   cd heimdall_daq_fw
 
   cd $projdir/krakensdr/heimdall_daq_fw/Firmware/_daq_core/
@@ -201,10 +201,14 @@ if [ $1 = "kraken" ]; then
   cp $projdir/librtlsdr/include/rtl-sdr.h .
   cp $projdir/librtlsdr/include/rtl-sdr_export.h .
   cp $projdir/Ne10/build/modules/libNE10.a .
+  cp $projdir/heimdall_daq_fw/heimdall_only_start.sh krakensdr
+  cp $projdir/heimdall_daq_fw/heimdall_only_stop.sh krakensdr
 
   # 7. Kraken DoA DSP (direction of arrival) Some of the install instructions are duplicate of what I've done earlier.
-  #cd $projdir
-  #git clone https://github.com/krakenrf/krakensdr_doa.git
+  cd $projdir/krakensdr
+  git clone https://github.com/krakenrf/krakensdr_doa.git
+  cp krakensdr_doa/util/kraken_doa_start.sh .
+  cp krakensdr_doa/util/kraken_doa_stop.sh .
 fi
 
 
