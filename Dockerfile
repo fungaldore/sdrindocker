@@ -14,6 +14,9 @@ COPY Miniforge3-Linux-aarch64.sh .
 RUN echo "blacklist dvb_usb_rtl28xxu" >> /etc/modprobe.d/rtl28xxu-blacklist.conf
 COPY setup.sh .
 RUN ./setup.sh kraken
+
+WORKDIR /root/code
+
 COPY daq_chain_config.ini krakensdr/heimdall_daq_fw/Firmware/daq_chain_config.ini.new
 RUN mv krakensdr/heimdall_daq_fw/Firmware/daq_chain_config.ini \
        krakensdr/heimdall_daq_fw/Firmware/daq_chain_config.ini.old && \
